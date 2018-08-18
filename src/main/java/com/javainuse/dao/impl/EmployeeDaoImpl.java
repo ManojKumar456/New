@@ -20,25 +20,23 @@ import com.javainuse.dao.EmployeeDao;
 import com.javainuse.model.Employee;
 
 @Repository
-public class EmployeeDaoImpl extends JdbcDaoSupport implements EmployeeDao{
-	
-	@Autowired 
+public class EmployeeDaoImpl extends JdbcDaoSupport implements EmployeeDao {
+
+	@Autowired
 	DataSource dataSource;
-	//In oder to available the data source to JDBC template
+
+	// In oder to available the data source to JDBC template
 	@PostConstruct
-	private void initialize(){
+	private void initialize() {
 		setDataSource(dataSource);
 	}
-	
+
 	@Override
 	public void insertEmployee(Employee emp) {
-		String sql = "INSERT INTO employee " +
-				"(empId, empName) VALUES (?, ?)" ;
-		getJdbcTemplate().update(sql, new Object[]{
-				emp.getEmpId(), emp.getEmpName()
-		});
+		String sql = "INSERT INTO employee " + "(empId, empName) VALUES (?, ?)";
+		getJdbcTemplate().update(sql, new Object[] { emp.getEmpId(), emp.getEmpName() });
 	}
-	
+
 	@Override
 	public void insertEmployees(final List<Employee> employees) {
 		String sql = "INSERT INTO employee " + "(empId, empName) VALUES (?, ?)";
@@ -48,33 +46,34 @@ public class EmployeeDaoImpl extends JdbcDaoSupport implements EmployeeDao{
 				ps.setString(1, employee.getEmpId());
 				ps.setString(2, employee.getEmpName());
 			}
-			
+
 			public int getBatchSize() {
 				return employees.size();
 			}
 		});
 
 	}
+
 	@Override
-	public List<Employee> getAllEmployees(){
+	public List<Employee> getAllEmployees() {
 		String sql = "SELECT * FROM employee";
 		List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
-		
+
 		List<Employee> result = new ArrayList<Employee>();
-		for(Map<String, Object> row:rows){
+		for (Map<String, Object> row : rows) {
 			Employee emp = new Employee();
-			emp.setEmpId((String)row.get("empId"));
-			emp.setEmpName((String)row.get("empName"));
+			emp.setEmpId((String) row.get("empId"));
+			emp.setEmpName((String) row.get("empName"));
 			result.add(emp);
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public Employee getEmployeeById(String empId) {
 		String sql = "SELECT * FROM employee WHERE empId = ?";
-		return (Employee)getJdbcTemplate().queryForObject(sql, new Object[]{empId}, new RowMapper<Employee>(){
+		return (Employee) getJdbcTemplate().queryForObject(sql, new Object[] { empId }, new RowMapper<Employee>() {
 			@Override
 			public Employee mapRow(ResultSet rs, int rwNumber) throws SQLException {
 				Employee emp = new Employee();
