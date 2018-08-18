@@ -31,6 +31,10 @@ public class EmployeeDaoImpl extends JdbcDaoSupport implements EmployeeDao {
 		setDataSource(dataSource);
 	}
 
+	public void add(){
+	   System.out.println("I have added this method");
+	}
+	
 	@Override
 	public void insertEmployee(Employee emp) {
 		String sql = "INSERT INTO employee " + "(empId, empName) VALUES (?, ?)";
